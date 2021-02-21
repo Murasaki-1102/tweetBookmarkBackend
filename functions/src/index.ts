@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { unset } from "lodash";
 import { Tag } from "./types/tag";
 const Twitter = require("twitter-lite");
 
@@ -58,7 +59,9 @@ exports.onSetAllTweet = functions
     const db = admin.firestore();
     const batch = db.batch();
     const tweetRef = db.collection(`users/${uid}/tweets`);
-    const allTweet = data.tweets;
+    const allTweet = data.tweets.map((tweet: any) =>
+      unset(tweet, "quoted_status.place.bounding_box.coordinates")
+    );
     await allTweet.map(async (tweet: any) => {
       batch.set(tweetRef.doc(tweet.id_str), {
         tweet,
