@@ -50,3 +50,21 @@ exports.onWriteTag = functions
       console.log(error);
     }
   });
+
+exports.onSetAllTweet = functions
+  .region("asia-northeast1")
+  .https.onCall(async (data, context) => {
+    const uid = context.auth?.uid!;
+    const db = admin.firestore();
+    const batch = db.batch();
+    const tweetRef = db.collection(`users/${uid}/tweets`);
+    const allTweet = data.tweets;
+    await allTweet.map(async (tweet: any) => {
+      batch.set(tweetRef.doc(tweet.id_str), {
+        tweet,
+        tagsId: [],
+        createdAt: new Date(),
+      });
+    });
+    await batch.commit();
+  });
