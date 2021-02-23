@@ -1,19 +1,23 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { unset } from "lodash";
+import Twitter from "twitter-lite";
 import { Tag } from "./types/tag";
-const Twitter = require("twitter-lite");
 
 admin.initializeApp();
 
 exports.requestToken = functions
   .region("asia-northeast1")
   .https.onCall(async (data, context) => {
+    console.log(context);
     const twitter = new Twitter({
       consumer_key: functions.config().twitter.apikey,
       consumer_secret: functions.config().twitter.apikeysecret,
     });
-    const token = await twitter.getRequestToken(data.callbackUrl);
+    const token = twitter
+      .getRequestToken(data.callbackUrl)
+      .then((res) => res)
+      .catch(console.error);
     return { ...token };
   });
 
