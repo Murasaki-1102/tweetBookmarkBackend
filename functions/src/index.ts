@@ -1,8 +1,8 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { unset } from "lodash";
-import Twitter from "twitter-lite";
 import { Tag } from "./types/tag";
+const Twitter = require("twitter-lite");
 
 admin.initializeApp();
 
@@ -16,7 +16,7 @@ exports.requestToken = functions
     });
     const token = twitter
       .getRequestToken(data.callbackUrl)
-      .then((res) => res)
+      .then((res: any) => res)
       .catch(console.error);
     return { ...token };
   });
