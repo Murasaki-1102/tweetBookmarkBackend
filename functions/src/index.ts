@@ -78,11 +78,11 @@ exports.getAllTweet = functions
     const client = getTwitterClient(data.accessToken, data.accessTokenSecret);
 
     try {
-      let newTweets = await client.get("favorites/list", {
+      let newTweets: any[] = await client.get("favorites/list", {
         tweet_mode: "extended",
       });
 
-      for (let tweet of newTweets) {
+      for (let tweet of newTweets.reverse()) {
         const doc = await tweetRef.doc(tweet.id_str).get();
         if (!doc.exists) {
           unset(tweet, "quoted_status.place.bounding_box.coordinates");
